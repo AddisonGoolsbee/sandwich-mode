@@ -1,9 +1,51 @@
 // One-shot swap with a 50% chance
 function maybeSandwich(img) {
+  // Mark to prevent re-processing
+  if (img.dataset.sandwichProcessed) return;
+  img.dataset.sandwichProcessed = "true";
+  
   if (Math.random() < 0.5) {
-    img.src = chrome.runtime.getURL("sandwich.webp");
-    img.style.objectFit = "cover";
-
+    // Create a wrapper div for the crossfade effect
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'relative';
+    wrapper.style.display = 'inline-block';
+    wrapper.style.width = img.offsetWidth + 'px';
+    wrapper.style.height = img.offsetHeight + 'px';
+    
+    // Clone the original image
+    const originalImg = img.cloneNode(true);
+    originalImg.style.position = 'absolute';
+    originalImg.style.top = '0';
+    originalImg.style.left = '0';
+    originalImg.style.transition = 'opacity 0.4s ease-in-out';
+    
+    // Create the sandwich image
+    const sandwichImg = document.createElement('img');
+    sandwichImg.src = chrome.runtime.getURL("sandwich.webp");
+    sandwichImg.style.position = 'absolute';
+    sandwichImg.style.top = '0';
+    sandwichImg.style.left = '0';
+    sandwichImg.style.opacity = '0';
+    sandwichImg.style.transition = 'opacity 0.4s ease-in-out';
+    sandwichImg.style.objectFit = 'cover';
+    sandwichImg.style.width = '100%';
+    sandwichImg.style.height = '100%';
+    
+    // Insert the wrapper before the original image
+    img.parentNode.insertBefore(wrapper, img);
+    
+    // Add both images to the wrapper
+    wrapper.appendChild(originalImg);
+    wrapper.appendChild(sandwichImg);
+    
+    // Start the crossfade
+    setTimeout(() => {
+      originalImg.style.opacity = '0';
+      sandwichImg.style.opacity = '1';
+    }, 50);
+    
+    // Remove the original image
+    img.remove();
   }
 }
 

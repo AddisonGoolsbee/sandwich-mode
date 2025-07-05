@@ -17,13 +17,16 @@
                 "content.js"
             ],
             "run_at": "document_start"
-
         }
     ],
     "web_accessible_resources": [
         {
-            "resources": ["sandwich.webp", "sandwich.gif"],
-            "matches": ["<all_urls>"]
+            "resources": [
+                "sandwich.webp"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
         }
     ],
     "permissions": [
