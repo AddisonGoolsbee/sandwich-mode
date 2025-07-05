@@ -18,6 +18,12 @@
             ]
         }
     ],
+    "web_accessible_resources": [
+        {
+            "resources": ["sandwich.webp", "sandwich.gif"],
+            "matches": ["<all_urls>"]
+        }
+    ],
     "permissions": [
         "storage",
         "tabs"
