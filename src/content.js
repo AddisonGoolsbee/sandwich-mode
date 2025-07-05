@@ -1,10 +1,16 @@
-// One-shot swap with a 50% chance
+let freq = 50; // default 50%
+
+// load initial value
+chrome.storage.local.get({ sandwichFrequency: 50 }, ({ sandwichFrequency }) => {
+  freq = sandwichFrequency;
+});
+
 function maybeSandwich(img) {
   // Mark to prevent re-processing
   if (img.dataset.sandwichProcessed) return;
   img.dataset.sandwichProcessed = "true";
   
-  if (Math.random() < 0.5) {
+  if (Math.random() < Math.min(freq / 100, 0.95)) {
     // Create a wrapper div for the crossfade effect
     const wrapper = document.createElement('div');
     wrapper.style.position = 'relative';
