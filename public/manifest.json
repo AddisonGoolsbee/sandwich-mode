@@ -15,10 +15,13 @@
     "background": {
         "service_worker": "background.js"
     },
+    "host_permissions": [
+        "https://*/*"
+    ],
     "content_scripts": [
         {
             "matches": [
-                "<all_urls>"
+                "https://*/*"
             ],
             "js": [
                 "content.js"
@@ -32,12 +35,11 @@
                 "sandwich.webp"
             ],
             "matches": [
-                "<all_urls>"
+                "https://*/*"
             ]
         }
     ],
     "permissions": [
-        "storage",
-        "tabs"
+        "storage"
     ]
 }
