@@ -1,35 +1,41 @@
+// One-shot swap with a 50% chance
 function maybeSandwich(img) {
-  // mark it so we don't re-process the same <img>
-  if (img.dataset.sandwichChecked) return;
-  img.dataset.sandwichChecked = "true";
-
-  // 50% chance
   if (Math.random() < 0.5) {
     img.src = chrome.runtime.getURL("sandwich.webp");
-    // Add CSS to make the image fit within its container
-    img.style.objectFit = "contain";
-    img.style.maxWidth = "100%";
-    img.style.maxHeight = "100%";
+    img.style.objectFit = "cover";
+
   }
 }
 
-// Process all <img> currently on the page
-document.querySelectorAll("img").forEach(maybeSandwich);
-
-// (Optional) Watch for new images added later
+// 1) Watch for new <img> elements
 const observer = new MutationObserver(mutations => {
   for (const m of mutations) {
-    m.addedNodes.forEach(node => {
-      if (node.nodeType === 1) {
-        // If it's an <img> or contains <img>s
-        if (node.tagName === "IMG") maybeSandwich(node);
-        node.querySelectorAll?.("img").forEach(maybeSandwich);
-      }
-    });
+    if (m.type === "childList") {
+      m.addedNodes.forEach(node => {
+        if (node.nodeType === 1) {
+          if (node.tagName === "IMG") maybeSandwich(node);
+          node.querySelectorAll?.("img").forEach(maybeSandwich);
+        }
+      });
+    }
+    // 2) Watch for any <img src=...> changes
+    else if (
+      m.type === "attributes" &&
+      m.target.tagName === "IMG" &&
+      m.attributeName === "src"
+    ) {
+      maybeSandwich(m.target);
+    }
   }
 });
 
+// Start observing before anything else happens
 observer.observe(document.documentElement, {
   childList: true,
-  subtree: true
+  subtree: true,
+  attributes: true,
+  attributeFilter: ["src"],
 });
+
+// 3) For any <img> already in the HTML (very early), swap once
+document.querySelectorAll("img").forEach(maybeSandwich);
