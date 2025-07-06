@@ -46,11 +46,11 @@ export function Popup() {
   }
 
   return (
-    <div className="p-4 w-64 space-y-4">
+    <div className="pt-4 pb-2 px-4 w-64">
       <div className="flex justify-center">
         <img src="sandwich.webp" alt="Sandwich" className="w-full" />
       </div>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 mt-4">
         <div className="flex items-center space-x-2">
           <label htmlFor="freq" className="font-medium">
             Frequency:
@@ -67,6 +67,17 @@ export function Popup() {
           onChange={handleChange}
           className="w-full"
         />
+      </div>
+      <div className="text-center text-[0.5rem] text-gray-500 mt-2">
+        an{" "}
+        <a
+          className="underline text-blue-300"
+          target="_blank"
+          href="https://addisongoolsbee.com"
+        >
+          Addison Goolsbee
+        </a>{" "}
+        production
       </div>
     </div>
   );
