@@ -5,7 +5,7 @@ chrome.storage.local.get({ sandwichFrequency: 50 }, ({ sandwichFrequency }) => {
   freq = sandwichFrequency;
 });
 
-function maybeSandwich(img) {
+function processImage(img) {
   // Mark to prevent re-processing
   if (img.dataset.sandwichProcessed) return;
   img.dataset.sandwichProcessed = "true";
@@ -55,6 +55,39 @@ function maybeSandwich(img) {
   }
 }
 
+function maybeSandwich(img) {
+  // Skip if already processed
+  if (img.dataset.sandwichProcessed) return;
+  
+  // If image is already loaded, process it immediately
+  if (img.complete && img.naturalWidth > 0) {
+    processImage(img);
+    return;
+  }
+  
+  // If image has a src but isn't loaded yet, wait for it to load
+  if (img.src && !img.complete) {
+    img.addEventListener('load', () => {
+      // Double-check it's still not processed and has valid dimensions
+      if (!img.dataset.sandwichProcessed && img.naturalWidth > 0) {
+        processImage(img);
+      }
+    }, { once: true });
+    
+    // Also handle error cases to prevent hanging
+    img.addEventListener('error', () => {
+      // Mark as processed even on error to prevent retries
+      img.dataset.sandwichProcessed = "true";
+    }, { once: true });
+    
+    return;
+  }
+  
+  // If image has no src yet, it might be a placeholder or lazy-loaded
+  // Mark it to be processed when src changes
+  img.dataset.sandwichPending = "true";
+}
+
 // 1) Watch for new <img> elements
 const observer = new MutationObserver(mutations => {
   for (const m of mutations) {
@@ -72,7 +105,11 @@ const observer = new MutationObserver(mutations => {
       m.target.tagName === "IMG" &&
       m.attributeName === "src"
     ) {
-      maybeSandwich(m.target);
+      // If this image was pending processing, now process it
+      if (m.target.dataset.sandwichPending) {
+        delete m.target.dataset.sandwichPending;
+        maybeSandwich(m.target);
+      }
     }
   }
 });
