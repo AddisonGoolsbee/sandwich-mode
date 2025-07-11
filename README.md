@@ -1,3 +1,5 @@
+*This is a mirror. See upstream: https://github.com/AddisonGoolsbee/sandwich-mode*
+
 # Sandwich Mode
 
 A Google Chrome extension which randomly transforms website images into 3D rotating sandwiches
